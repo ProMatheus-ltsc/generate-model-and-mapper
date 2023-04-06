@@ -22,7 +22,8 @@
                     var column = columns[i].trim().split(/\s+/);
                     var columnName = column[0].replace(/`/g, '').toCamelCase();
                     var columnType = getColumnJavaType(column[1]);
-                    code += '\t' + 'private ' + columnType + ' ' + columnName + ';\n';
+                    var columnComment = column[column.length - 1].replace(/'/g, '').replace(/COMMENT=/g, '');
+                    code += '\t' + 'private ' + columnType + ' ' + columnName + '; // ' + columnComment + '\n';
                 }
                 code += '}';
                 return code;
@@ -30,10 +31,10 @@
 
             function generateMapperCode(tableName, columns) {
                 var code = 'public interface ' + tableName.toCamelCase()  + 'Mapper' + ' extends BaseMapper<' + tableName.toCamelCase() + '>' + '{\n';
-                code += '\t' + 'void insert(' + tableName.toCamelCase() + ' ' + tableName.toCamelCaseFirstLower() + ');\n';
-                code += '\t' + 'void update(' + tableName.toCamelCase() + ' ' + tableName.toCamelCaseFirstLower() + ');\n';
-                code += '\t' + 'void delete(int id);\n';
-                code += '\t' + tableName.toCamelCase() + ' select(int id);\n';
+                code += '\t' + 'void insert(' + tableName.toCamelCase() + ' ' + tableName.toCamelCaseFirstLower() + '); // 插入\n';
+                code += '\t' + 'void update(' + tableName.toCamelCase() + ' ' + tableName.toCamelCaseFirstLower() + '); // 更新\n';
+                code += '\t' + 'void delete(int id); // 删除\n';
+                code += '\t' + tableName.toCamelCase() + ' select(int id); // 查询\n';
                 code += '}';
                 return code;
             }
