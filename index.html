@@ -6,21 +6,21 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
         $(document).ready(function() {
-            $('#generate_btn').click(function() {
-                var tableSql = $('#table_sql').val();
+            $('#generateBtn').click(function() {
+                var tableSql = $('#tableSql').val();
                 var tableName = tableSql.match(/CREATE TABLE `(\w+)`/i)[1];
                 var columns = tableSql.match(/\(([\s\S]+)\)/)[1].trim().split('\n');
                 var modelCode = generateModelCode(tableName, columns);
                 var mapperCode = generateMapperCode(tableName, columns);
-                $('#model_code').text(modelCode);
-                $('#mapper_code').text(mapperCode);
+                $('#modelCode').text(modelCode);
+                $('#mapperCode').text(mapperCode);
             });
 
             function generateModelCode(tableName, columns) {
-                var code = 'public class ' + tableName.capitalize() + ' implements Serializable' + ' {\n';
+                var code = 'public class ' + tableName.toCamelCase() + ' implements Serializable' + ' {\n';
                 for (var i = 0; i < columns.length; i++) {
                     var column = columns[i].trim().split(/\s+/);
-                    var columnName = column[0].replace(/`/g, '');
+                    var columnName = column[0].replace(/`/g, '').toCamelCase();
                     var columnType = getColumnJavaType(column[1]);
                     code += '\t' + 'private ' + columnType + ' ' + columnName + ';\n';
                 }
@@ -29,11 +29,11 @@
             }
 
             function generateMapperCode(tableName, columns) {
-                var code = 'public interface ' + tableName.capitalize()  + 'Mapper' + ' extends BaseMapper<' + tableName.capitalize() + '>' + '{\n';
-                code += '\t' + 'void insert(' + tableName.capitalize() + ' ' + tableName + ');\n';
-                code += '\t' + 'void update(' + tableName.capitalize() + ' ' + tableName + ');\n';
+                var code = 'public interface ' + tableName.toCamelCase()  + 'Mapper' + ' extends BaseMapper<' + tableName.toCamelCase() + '>' + '{\n';
+                code += '\t' + 'void insert(' + tableName.toCamelCase() + ' ' + tableName.toCamelCaseFirstLower() + ');\n';
+                code += '\t' + 'void update(' + tableName.toCamelCase() + ' ' + tableName.toCamelCaseFirstLower() + ');\n';
                 code += '\t' + 'void delete(int id);\n';
-                code += '\t' + tableName.capitalize() + ' select(int id);\n';
+                code += '\t' + tableName.toCamelCase() + ' select(int id);\n';
                 code += '}';
                 return code;
             }
@@ -56,17 +56,27 @@
                 }
             }
 
-            String.prototype.capitalize = function() {
-                return this.charAt(0).toUpperCase() + this.slice(1);
+            String.prototype.toCamelCase = function() {
+                return this.replace(/_([a-z])/g, function(match, p1) {
+                    return p1.toUpperCase();
+                });
             };
 
-            $('#copy_model_btn').click(function() {
-                var modelCode = $('#model_code').text();
+            String.prototype.toCamelCaseFirstLower = function() {
+                return this.replace(/_([a-z])/g, function(match, p1) {
+                    return p1.toUpperCase();
+                }).replace(/^([A-Z])/g, function(match, p1) {
+                    return p1.toLowerCase();
+                });
+            };
+
+            $('#copyModelBtn').click(function() {
+                var modelCode = $('#modelCode').text();
                 copyToClipboard(modelCode);
             });
 
-            $('#copy_mapper_btn').click(function() {
-                var mapperCode = $('#mapper_code').text();
+            $('#copyMapperBtn').click(function() {
+                var mapperCode = $('#mapperCode').text();
                 copyToClipboard(mapperCode);
             });
 
@@ -80,20 +90,19 @@
             }
         });
     </script>
-</head>
-<body>
+</head<body>
 <h1>根据建表语句，自动生成Model和Mapper</h1>
 <form>
-    <label for="table_sql">建表语句：</label>
-    <textarea id="table_sql" rows="10" cols="50"></textarea>
+    <label for="tableSql">建表语句：</label>
+    <textarea id="tableSql" rows="10" cols="50"></textarea>
     <br>
-    <input type="button" id="generate_btn" value="生成">
+    <input type="button" id="generateBtn" value="生成">
 </form>
 <h1>生成的Model代码：</h1>
-<pre id="model_code"></pre>
-<button id="copy_model_btn">复制</button>
+<pre id="modelCode"></pre>
+<button id="copyModelBtn">复制</button>
 <h1>生成的Mapper代码：</h1>
-<pre id="mapper_code"></pre>
-<button id="copy_mapper_btn">复制</button>
+<pre id="mapperCode"></pre>
+<button id="copyMapperBtn">复制</button>
 </body>
 </html>
