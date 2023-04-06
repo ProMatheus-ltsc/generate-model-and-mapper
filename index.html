@@ -56,18 +56,12 @@
                     return 'Object';
                 }
             }
-
-            String.prototype.toCamelCase = function() {
-                return this.replace(/_([a-z])/g, function(match, p1) {
-                    return p1.toUpperCase();
-                });
-            };
             
             String.prototype.toPascalCase = function() {
                 return this.replace(/(^|\s)\w/g, function(s) {
                     return s.trim().toUpperCase();
-                }).replace(/_/g, '').replace(/(\w)(\w*)/g, function(v, v1, v2) {
-                    return v1.toUpperCase() + v2.toLowerCase();
+                }).replace(/_([a-z])/g, function(match, p1) {
+                    return p1.toUpperCase();
                 });
             };
 
