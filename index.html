@@ -22,8 +22,8 @@
                     var column = columns[i].trim().split(/\s+/);
                     var columnName = column[0].replace(/`/g, '').toCamelCaseFirstLower();
                     var columnType = getColumnJavaType(column[1]);
-                    var columnComment = column[column.length - 1].replace(/'/g, '').replace(/COMMENT=/g, '');
-                    code += '\t' + '//' + columnComment + '\n' + '\t' + 'private ' + columnType + ' ' + columnName + ';' + '\n';
+                    var columnComment = column[column.length - 1].replace(/'/g, '').replace(',','').replace(/COMMENT=/g, '');
+                    code += '\t' + '/**\n' + '\t *' + '*/' + columnComment + '\n' + '\t' + 'private ' + columnType + ' ' + columnName + ';' + '\n';
                 }
                 code += '}';
                 return code;
