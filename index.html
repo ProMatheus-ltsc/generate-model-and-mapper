@@ -32,7 +32,7 @@
             function generateMapperCode(tableName, columns) {
                 var code = 'public interface ' + tableName.toPascalCase()  + 'Mapper' + ' extends BaseMapper<' + tableName.toPascalCase() + '>' + '{\n';
                 code += '\t' + 'void insert(' + tableName.toPascalCase() + ' ' + tableName.toCamelCaseFirstLower() + '); \n';
-                code += '\t' + 'void update(' + tableName.toPascalCase()) + ' ' + tableName.toCamelCaseFirstLower() + '); \n';
+                code += '\t' + 'void update(' + tableName.toPascalCase() + ' ' + tableName.toCamelCaseFirstLower() + '); \n';
                 code += '\t' + 'void delete(int id); \n';
                 code += '\t' + tableName.toPascalCase() + ' select(int id);\n';
                 code += '}';
