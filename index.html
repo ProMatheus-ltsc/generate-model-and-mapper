@@ -23,7 +23,7 @@
                     var columnName = column[0].replace(/`/g, '').toCamelCase();
                     var columnType = getColumnJavaType(column[1]);
                     var columnComment = column[column.length - 1].replace(/'/g, '').replace(/COMMENT=/g, '');
-                    code += '\t' + columnComment + '\n' + '\t' + 'private ' + columnType + ' ' + columnName + '; // ' + '\n';
+                    code += '\t' + '//' + columnComment + '\n' + '\t' + 'private ' + columnType + ' ' + columnName + ';' + '\n';
                 }
                 code += '}';
                 return code;
@@ -34,7 +34,7 @@
                 code += '\t' + 'void insert(' + tableName.toCamelCase() + ' ' + tableName.toCamelCaseFirstLower() + '); \n';
                 code += '\t' + 'void update(' + tableName.toCamelCase() + ' ' + tableName.toCamelCaseFirstLower() + '); \n';
                 code += '\t' + 'void delete(int id); \n';
-                code += '\t' + tableName.toCamelCase() + ' select(int id); // 查询\n';
+                code += '\t' + tableName.toCamelCase() + ' select(int id);\n';
                 code += '}';
                 return code;
             }
