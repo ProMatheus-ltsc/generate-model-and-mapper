@@ -41,9 +41,9 @@
 
             function getColumnJavaType(columnType) {
                 if (columnType.indexOf('bigint') !== -1) {
-                    return 'long';
+                    return 'Long';
                 } else if (columnType.indexOf('int') !== -1) {
-                    return 'int';
+                    return 'Integer';
                 } else if (columnType.indexOf('tinyint') !== -1) {
                     return 'byte';
                 } else if (columnType.indexOf('varchar') !== -1 || columnType.indexOf('text') !== -1) {
