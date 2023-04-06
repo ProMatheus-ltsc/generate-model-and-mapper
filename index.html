@@ -17,7 +17,7 @@
             });
 
             function generateModelCode(tableName, columns) {
-                var code = 'public class ' + tableName.toPascalCase() + ' implements Serializable' + ' {\n';
+                var code = '@Data\n' + 'public class ' + tableName.toPascalCase() + ' implements Serializable' + ' {\n';
                 for (var i = 0; i < columns.length; i++) {
                     var column = columns[i].trim().split(/\s+/);
                     var columnName = column[0].replace(/`/g, '').toCamelCaseFirstLower();
@@ -30,7 +30,7 @@
             }
 
             function generateMapperCode(tableName, columns) {
-                var code = 'public interface ' + tableName.toPascalCase()  + 'Mapper' + ' extends BaseMapper<' + tableName.toPascalCase() + '>' + '{\n';
+                var code = '@Mapper\n' + 'public interface ' + tableName.toPascalCase()  + 'Mapper' + ' extends BaseMapper<' + tableName.toPascalCase() + '>' + '{\n';
                 code += '\t' + 'void insert(' + tableName.toPascalCase() + ' ' + tableName.toCamelCaseFirstLower() + '); \n';
                 code += '\t' + 'void update(' + tableName.toPascalCase() + ' ' + tableName.toCamelCaseFirstLower() + '); \n';
                 code += '\t' + 'void delete(int id); \n';
