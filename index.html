@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>自动生成Model和Mapper</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            $('#generate_btn').click(function() {
+                var tableSql = $('#table_sql').val();
+                var tableName = tableSql.match(/CREATE TABLE `(\w+)`/i)[1];
+                var columns = tableSql.match(/\(([\s\S]+)\)/)[1].trim().split('\n');
+                var modelCode = generateModelCode(tableName, columns);
+                var mapperCode = generateMapperCode(tableName, columns);
+                $('#model_code').text(modelCode);
+                $('#mapper_code').text(mapperCode);
+            });
+
+            function generateModelCode(tableName, columns) {
+                var code = 'public class ' + tableName.capitalize() + ' implements Serializable' + ' {\n';
+                for (var i = 0; i < columns.length; i++) {
+                    var column = columns[i].trim().split(/\s+/);
+                    var columnName = column[0].replace(/`/g, '');
+                    var columnType = getColumnJavaType(column[1]);
+                    code += '\t' + 'private ' + columnType + ' ' + columnName + ';\n';
+                }
+                code += '}';
+                return code;
+            }
+
+            function generateMapperCode(tableName, columns) {
+                var code = 'public interface ' + tableName.capitalize()  + 'Mapper' + ' extends BaseMapper<' + tableName.capitalize() + '>' + '{\n';
+                code += '\t' + 'void insert(' + tableName.capitalize() + ' ' + tableName + ');\n';
+                code += '\t' + 'void update(' + tableName.capitalize() + ' ' + tableName + ');\n';
+                code += '\t' + 'void delete(int id);\n';
+                code += '\t' + tableName.capitalize() + ' select(int id);\n';
+                code += '}';
+                return code;
+            }
+
+            function getColumnJavaType(columnType) {
+                if (columnType.indexOf('bigint') !== -1) {
+                    return 'long';
+                } else if (columnType.indexOf('int') !== -1) {
+                    return 'int';
+                } else if (columnType.indexOf('tinyint') !== -1) {
+                    return 'byte';
+                } else if (columnType.indexOf('varchar') !== -1 || columnType.indexOf('text') !== -1) {
+                    return 'String';
+                } else if (columnType.indexOf('timestamp') !== -1) {
+                    return 'Timestamp';
+                } else if (columnType.indexOf('decimal') !== -1) {
+                    return 'BigDecimal';
+                } else {
+                    return 'Object';
+                }
+            }
+
+            String.prototype.capitalize = function() {
+                return this.charAt(0).toUpperCase() + this.slice(1);
+            };
+
+            $('#copy_model_btn').click(function() {
+                var modelCode = $('#model_code').text();
+                copyToClipboard(modelCode);
+            });
+
+            $('#copy_mapper_btn').click(function() {
+                var mapperCode = $('#mapper_code').text();
+                copyToClipboard(mapperCode);
+            });
+
+            function copyToClipboard(text) {
+                var $temp = $('<textarea>');
+                $('body').append($temp);
+                $temp.val(text).select();
+                document.execCommand('copy');
+                $temp.remove();
+                alert('已复制到剪贴板');
+            }
+        });
+    </script>
+</head>
+<body>
+<h1>根据建表语句，自动生成Model和Mapper</h1>
+<form>
+    <label for="table_sql">建表语句：</label>
+    <textarea id="table_sql" rows="10" cols="50"></textarea>
+    <br>
+    <input type="button" id="generate_btn" value="生成">
+</form>
+<h1>生成的Model代码：</h1>
+<pre id="model_code"></pre>
+<button id="copy_model_btn">复制</button>
+<h1>生成的Mapper代码：</h1>
+<pre id="mapper_code"></pre>
+<button id="copy_mapper_btn">复制</button>
+</body>
+</html>
