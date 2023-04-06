@@ -65,8 +65,10 @@
             
             String.prototype.toPascalCase = function() {
                 return this.replace(/(^|\s)\w/g, function(s) {
-                     return s.toUpperCase();
-                }).replace(/_/g, '');
+                    return s.trim().toUpperCase();
+                }).replace(/_/g, '').replace(/(\w)(\w*)/g, function(v, v1, v2) {
+                    return v1.toUpperCase() + v2.toLowerCase();
+                });
             };
 
 
